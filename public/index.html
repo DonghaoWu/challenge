@@ -14,7 +14,7 @@
         margin-left: 2rem;
         width: 90%;
       }
-      .user-info {
+      .user-info-container {
         width: 100%;
       }
       .sub-title {
@@ -48,16 +48,15 @@
   </head>
   <body>
     <div class="main">
-      <div class="user-info">
+      <div class="user-info-container">
         <h2 class="title">All Users</h2>
         <div class="sub-title">Users and their age</div>
         <table class="general-table">
-          <tbody id="users-list">
-            <tr>
-              <td>Username</td>
-              <td>Age</td>
-            </tr>
-          </tbody>
+          <tr>
+            <td>Username</td>
+            <td>Age</td>
+          </tr>
+          <tbody id="users-list"></tbody>
         </table>
       </div>
       <div class="select-container">

@@ -10,6 +10,15 @@ const port = process.env.PORT || 3000;
 // register routes
 registerRoutes(app);
 
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    type: 'error',
+    message: err.message,
+  });
+});
+
 app.use(express.static('../public'));
 
 app.get('*', (req, res) => {

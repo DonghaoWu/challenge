@@ -5,41 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="./favicon.png" />
     <title>Walmex Challenge</title>
+    <style>
+      body {
+        background-color: white;
+        width: 100%;
+      }
+      .main {
+        margin-left: 2rem;
+        width: 90%;
+      }
+      .user-info {
+        width: 100%;
+      }
+      .sub-title {
+        margin: 1rem 0;
+      }
+      .general-table {
+        margin: 1rem;
+        width: 80%;
+      }
+      table,
+      tr,
+      td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid lightgray;
+        border-collapse: collapse;
+      }
+      .select-container {
+        width: 100%;
+        margin-top: 3rem;
+      }
+      #items-list {
+        font-size: 1.1rem;
+        background-color: #4385f4;
+        color: white;
+        height: 2rem;
+        width: 5rem;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <div class="main">
-      <h2 class="title">All Users</h2>
-      <div class="sub-title">users and their age</div>
-      <table>
-        <th>
+      <div class="user-info">
+        <h2 class="title">All Users</h2>
+        <div class="sub-title">Users and their age</div>
+        <table class="general-table">
+          <tbody id="users-list">
+            <tr>
+              <td>Username</td>
+              <td>Age</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="select-container">
+        <h2>Age Demographic of Users With ___</h2>
+        <select id="items-list">
+          <option>Item</option>
+        </select>
+        <table class="general-table">
           <tr>
-            Username
+            <td>Age</td>
+            <td>Count</td>
           </tr>
-          <tr>
-            Age
-          </tr>
-        </th>
-        <tbody id="users-list"></tbody>
-      </table>
-      <h2>Age Demographic of Users With ___</h2>
-      <select id="items-list">
-        <option>Item</option>
-      </select>
+          <tbody id="age-list"></tbody>
+        </table>
+      </div>
     </div>
 
     <script>
       let tableElement = document.getElementById('users-list');
       let selectElement = document.getElementById('items-list');
+      let resTableElement = document.getElementById('age-list');
 
-      let createTdElement = (username, age) => {
+      let createTdElementWithTwoParameters = (text1, text2) => {
         let tr = document.createElement('tr');
         let td1 = document.createElement('td');
-        let usernameText = document.createTextNode(username);
+        let tdText1 = document.createTextNode(text1);
         let td2 = document.createElement('td');
-        let userAge = document.createTextNode(age);
+        let tdText2 = document.createTextNode(text2);
 
-        td1.appendChild(usernameText);
-        td2.appendChild(userAge);
+        td1.appendChild(tdText1);
+        td2.appendChild(tdText2);
         tr.appendChild(td1);
         tr.appendChild(td2);
 
@@ -49,6 +98,7 @@
       let createOptionElement = (item) => {
         let option = document.createElement('option');
         let itemText = document.createTextNode(item);
+        option.value = item;
 
         option.appendChild(itemText);
 
@@ -58,20 +108,42 @@
       let fetchUsers = async () => {
         const res = await fetch('http://localhost:3000/users');
         const data = await res.json();
-        let appendElements = data.forEach(({ username, age }) => {
-          let curTd = createTdElement(username, age);
-          tableElement.appendChild(curTd);
-        });
+        if (data.length) {
+          let appendElements = data.forEach(({ username, age }) => {
+            let curTd = createTdElementWithTwoParameters(username, age);
+            tableElement.appendChild(curTd);
+          });
+        }
       };
 
       let fetchItems = async () => {
         const res = await fetch('http://localhost:3000/items');
         const data = await res.json();
-        let appendElements = data.forEach((el) => {
-          let curOp = createOptionElement(el);
-          selectElement.appendChild(curOp);
-        });
+        if (data.length) {
+          let appendElements = data.forEach((el) => {
+            let curOp = createOptionElement(el);
+            selectElement.appendChild(curOp);
+          });
+        }
       };
+
+      selectElement.addEventListener('change', async function (e) {
+        if (this.value === 'Item') {
+          resTableElement.innerHTML = '';
+          return;
+        }
+        resTableElement.innerHTML = '';
+        const res = await fetch(
+          `http://localhost:3000/users/age/${this.value}`
+        );
+        const data = await res.json();
+        if (data.length) {
+          let appendElements = data.forEach(({ age, count }) => {
+            let curTd = createTdElementWithTwoParameters(age, count);
+            resTableElement.appendChild(curTd);
+          });
+        }
+      });
 
       fetchUsers();
       fetchItems();

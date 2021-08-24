@@ -2,7 +2,6 @@
 const mockDBCalls = require('../database/index.js');
 
 const getItemsHandler = async (request, response) => {
-  console.log('hit here')
   const data = await mockDBCalls.getItems();
   return response.status(200).send(JSON.stringify(data));
 };

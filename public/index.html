@@ -1,11 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./favicon.png" />
     <title>Walmex Challenge</title>
-</head>
-<body>
-    Fill me in :)
-</body>
+  </head>
+  <body>
+    <div class="main">
+      <h2 class="title">All Users</h2>
+      <div class="sub-title">users and their age</div>
+      <table>
+        <th>
+          <tr>
+            Username
+          </tr>
+          <tr>
+            Age
+          </tr>
+        </th>
+        <tbody id="users-list"></tbody>
+      </table>
+      <h2>Age Demographic of Users With ___</h2>
+      <select id="items-list">
+        <option>Item</option>
+      </select>
+    </div>
+
+    <script>
+      let tableElement = document.getElementById('users-list');
+      let selectElement = document.getElementById('items-list');
+
+      let createTdElement = (username, age) => {
+        let tr = document.createElement('tr');
+        let td1 = document.createElement('td');
+        let usernameText = document.createTextNode(username);
+        let td2 = document.createElement('td');
+        let userAge = document.createTextNode(age);
+
+        td1.appendChild(usernameText);
+        td2.appendChild(userAge);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+
+        return tr;
+      };
+
+      let createOptionElement = (item) => {
+        let option = document.createElement('option');
+        let itemText = document.createTextNode(item);
+
+        option.appendChild(itemText);
+
+        return option;
+      };
+
+      let fetchUsers = async () => {
+        const res = await fetch('http://localhost:3000/users');
+        const data = await res.json();
+        let appendElements = data.forEach(({ username, age }) => {
+          let curTd = createTdElement(username, age);
+          tableElement.appendChild(curTd);
+        });
+      };
+
+      let fetchItems = async () => {
+        const res = await fetch('http://localhost:3000/items');
+        const data = await res.json();
+        let appendElements = data.forEach((el) => {
+          let curOp = createOptionElement(el);
+          selectElement.appendChild(curOp);
+        });
+      };
+
+      fetchUsers();
+      fetchItems();
+    </script>
+  </body>
 </html>
